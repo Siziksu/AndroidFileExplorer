@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fileRow"
+                android:padding="5dp">
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:id="@+id/fileImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/system_file"
+        android:contentDescription="@string/file_image" />
+
+    <RelativeLayout
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/fileImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/fileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:text="@string/file_name" />
+
+        <TextView
+            android:layout_below="@+id/fileName"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/filePermissions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_light"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:text="@string/file_permissions" />
+
+        <TextView
+            android:layout_below="@+id/fileName"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/fileDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_light"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:text="@string/file_date" />
+    </RelativeLayout>
+</RelativeLayout>

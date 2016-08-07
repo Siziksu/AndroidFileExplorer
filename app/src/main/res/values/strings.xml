@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Explorer</string>
+    <string name="button_ok">OK</string>
+    <string name="button_clear">Clear</string>
+    <string name="button_file_picker_select_all">All</string>
+    <string name="button_file_picker_select_files">Files</string>
+    <string name="button_file_picker_select_folders">Folders</string>
+    <string name="file_image">image</string>
+    <string name="file_name">filename</string>
+    <string name="file_permissions">permissions</string>
+    <string name="file_date">date</string>
+    <string name="file_picker_selected">Selected files</string>
+    <string name="file_picker_checkbox_multi_selection">Multi selection</string>
+    <string name="file_picker_checkbox_show_hidden">Show hidden files</string>
+    <string name="file_picker_checkbox_show_symlinks">Show symlinks</string>
+    <string name="file_picker_checkbox_show_details">Show file details</string>
+    <string name="file_picker_checkbox_show_specials">Show specials</string>
+    <string name="file_picker_empty_folder">The folder is empty.</string>
+    <string name="file_picker_folder_no_folder_inside">No folders inside this folder.</string>
+    <string name="file_picker_could_not_read_folder">Could not read folder contents.</string>
+    <string name="file_picker_nothing_selected">Nothing selected.</string>
+</resources>
