@@ -7,9 +7,30 @@
         android:id="@+id/defaultToolbar"
         layout="@layout/toolbar_default" />
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
         android:layout_below="@+id/defaultToolbar"
+        android:id="@+id/folder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:singleLine="true"
+        android:textColor="@color/grey"
+        android:padding="5dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/folder"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/emptyFolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="25sp"
+        android:singleLine="true"
+        android:textColor="@color/grey_light"
+        android:text="@string/empty_folder"
+        android:padding="5dp" />
 </RelativeLayout>

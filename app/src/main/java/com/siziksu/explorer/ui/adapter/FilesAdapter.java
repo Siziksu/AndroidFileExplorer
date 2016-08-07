@@ -19,7 +19,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
 
     private final OnAdapterListener listener;
     private final LayoutInflater inflater;
-    private final List<File> files;
+    private List<File> files;
 
     public FilesAdapter(Context context, List<File> files, OnAdapterListener listener) {
         this.inflater = LayoutInflater.from(context);
@@ -41,23 +41,16 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
         String name;
         String permissions;
         String date;
-        if (position == 0 && !FileUtils.isRoot(file.getParentFile())) {
+        if (symlink) {
+            image = R.drawable.system_symlink;
+        } else if (file.isDirectory()) {
             image = R.drawable.system_folder;
-            name = "..";
-            permissions = "Parent folder";
-            date = "";
         } else {
-            if (symlink) {
-                image = R.drawable.system_symlink;
-            } else if (file.isDirectory()) {
-                image = R.drawable.system_folder;
-            } else {
-                image = MimeTypes.fileIcon(file.getName());
-            }
-            name = file.getName();
-            permissions = FileUtils.filePermissions(file);
-            date = FileUtils.fileDate(file);
+            image = MimeTypes.fileIcon(file.getName());
         }
+        name = file.getName();
+        permissions = FileUtils.filePermissions(file);
+        date = FileUtils.fileDate(file);
         ((MainViewHolder) holder).fileImage.setImageResource(image);
         ((MainViewHolder) holder).fileName.setText(name);
         ((MainViewHolder) holder).filePermissions.setText(permissions);
@@ -75,6 +68,10 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
     @Override
     public int getItemCount() {
         return files.size();
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 
     class BaseViewHolder extends RecyclerView.ViewHolder {
