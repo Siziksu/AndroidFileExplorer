@@ -2,6 +2,12 @@
 
 File explorer for Android.
 
+# Screenshots
+
+![Screenshot](art/Screenshot_20160807-130047.png)
+![Screenshot](art/Screenshot_20160807-130106.png)
+![Screenshot](art/Screenshot_20160807-130138.png)
+
 ## License
 
     Copyright 2016 Esteban Latre
