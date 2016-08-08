@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import com.siziksu.explorer.R;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
     private MainPresenter presenter;
     private TextView folder;
     private TextView emptyFolder;
+    private HorizontalScrollView horizontalScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
         ActivityCommon.get().applyToolBarStyleWithHome(this, defaultToolbar);
         folder = (TextView) findViewById(R.id.folder);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
+        horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
         presenter = new MainPresenterImpl();
         presenter.setRecyclerView(this, R.id.recyclerView, this);
     }
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
     @Override
     public void setPath(String path) {
         folder.setText(path);
+        presenter.fullScroll(horizontalScrollView);
     }
 
     @Override

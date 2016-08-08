@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.HorizontalScrollView;
 
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.comparators.FileComparator;
@@ -125,4 +127,16 @@ public class MainPresenterImpl implements MainPresenter {
             return false;
         }
     }
+
+    @Override
+    public void fullScroll(final HorizontalScrollView view) {
+        view.post(new Runnable() {
+
+            @Override
+            public void run() {
+                view.fullScroll(View.FOCUS_RIGHT);
+            }
+        });
+    }
+
 }
