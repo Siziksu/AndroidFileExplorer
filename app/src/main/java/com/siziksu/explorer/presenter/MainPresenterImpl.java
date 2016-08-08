@@ -1,12 +1,11 @@
 package com.siziksu.explorer.presenter;
 
+import android.app.Activity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.siziksu.explorer.R;
-import com.siziksu.explorer.common.Constants;
 import com.siziksu.explorer.common.comparators.FileComparator;
 import com.siziksu.explorer.common.files.FileUtils;
 import com.siziksu.explorer.common.functions.Done;
@@ -95,7 +94,6 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void fileClicked(int position) {
-        Log.d(Constants.TAG, files.get(position).getName());
         File newFile = files.get(position);
         if (newFile != null) {
             if (newFile.isDirectory()) {
@@ -106,15 +104,13 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     @Override
-    public void setRecyclerView(int id, FilesAdapter.OnAdapterListener listener) {
-        if (view != null) {
-            RecyclerView recyclerView = (RecyclerView) view.getActivity().findViewById(id);
-            recyclerView.setLayoutManager(new LinearLayoutManager(view.getActivity(), LinearLayoutManager.VERTICAL, false));
-            adapter = new FilesAdapter(view.getActivity(), files, listener);
-            recyclerView.setAdapter(adapter);
-            RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(view.getActivity(), R.drawable.recycler_divider));
-            recyclerView.addItemDecoration(dividerItemDecoration);
-        }
+    public void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener) {
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(id);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
+        adapter = new FilesAdapter(activity, files, listener);
+        recyclerView.setAdapter(adapter);
+        RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     @Override

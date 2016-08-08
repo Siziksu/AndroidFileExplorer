@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.ActivityCommon;
-import com.siziksu.explorer.common.Constants;
 import com.siziksu.explorer.presenter.MainPresenter;
 import com.siziksu.explorer.presenter.MainPresenterImpl;
 import com.siziksu.explorer.presenter.MainView;
@@ -31,13 +29,13 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
         folder = (TextView) findViewById(R.id.folder);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
         presenter = new MainPresenterImpl();
+        presenter.setRecyclerView(this, R.id.recyclerView, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         presenter.register(this);
-        presenter.setRecyclerView(R.id.recyclerView, this);
         presenter.getFiles();
     }
 

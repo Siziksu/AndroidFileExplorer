@@ -1,5 +1,7 @@
 package com.siziksu.explorer.presenter;
 
+import android.app.Activity;
+
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 
 public interface MainPresenter {
@@ -12,7 +14,7 @@ public interface MainPresenter {
 
     void fileClicked(int position);
 
-    void setRecyclerView(int id, FilesAdapter.OnAdapterListener listener);
+    void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
 
     boolean onBackPressed();
 }

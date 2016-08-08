@@ -35,6 +35,9 @@ public class GetFilesRequest {
                         List<File> list = new ArrayList<>();
                         if (files != null) {
                             for (File file : files) {
+                                if (!file.exists()) {
+                                    continue;
+                                }
                                 if (!showHidden && file.isHidden()) {
                                     continue;
                                 }
