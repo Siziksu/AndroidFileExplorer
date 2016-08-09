@@ -4,10 +4,8 @@ import android.app.Application;
 
 import com.siziksu.explorer.common.ActivityCommon;
 import com.siziksu.explorer.common.Preferences;
+import com.siziksu.explorer.common.files.MimeTypeMap;
 
-/**
- * Application class.
- */
 public class App extends Application {
 
     @Override
@@ -15,5 +13,6 @@ public class App extends Application {
         super.onCreate();
         Preferences.init(getApplicationContext());
         ActivityCommon.init();
+        MimeTypeMap.init();
     }
 }

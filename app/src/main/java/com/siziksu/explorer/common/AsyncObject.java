@@ -9,11 +9,6 @@ import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
 
-/**
- * Object used to easily create async calls.
- *
- * @param <O> the result type of the object
- */
 public final class AsyncObject<O> {
 
     private Runnable runnable;
@@ -25,92 +20,40 @@ public final class AsyncObject<O> {
     private Done done;
     private boolean subscribeOnMainThread;
 
-    /**
-     * Instantiates an {@code AsyncObject}
-     */
     public AsyncObject() {
         // Constructor
     }
 
-    /**
-     * Subscribes the feedback functions on the main thread.
-     *
-     * @return {@code AsyncObject}
-     */
     public AsyncObject<O> subscribeOnMainThread() {
         subscribeOnMainThread = true;
         return this;
     }
 
-    /**
-     * Gets if the object is running.
-     *
-     * @return true if it is running or false if it is not
-     */
     public boolean isExecuting() {
         return executing;
     }
 
-    /**
-     * Sets the {@link Action} used to create the {@link Runnable} that will
-     * be executed in a new {@link Thread} when the method {@link #run()}
-     * is called.
-     *
-     * @param action the Action function that will be used
-     *
-     * @return {@code AsyncObject}
-     */
     public AsyncObject<O> action(final Action<O> action) {
         this.action = action;
         return this;
     }
 
-    /**
-     * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
-     * <br />
-     * And finally executes the {@link Action}.
-     *
-     * @param success the Success function that will be used
-     */
     public void subscribe(final Success<O> success) {
         this.success = success;
         run();
     }
 
-    /**
-     * Sets the {@link Success} used to return the response of the
-     * {@link Action} if ends successfully.
-     * <br />
-     * Sets the {@link Error} used to return {@link Exception} that will be
-     * thrown if the {@link Action} fails.
-     * <br />
-     * And finally executes the {@link Action}.
-     *
-     * @param success the Success function that will be used
-     * @param fail    the Fail function that will be used
-     */
     public void subscribe(final Success<O> success, final Fail fail) {
         this.success = success;
         this.fail = fail;
         run();
     }
 
-    /**
-     * Sets the {@link Done} used to emit when the response of the
-     * {@link Action} if ends.
-     *
-     * @param done the Done function that will be used
-     */
     public AsyncObject<O> done(final Done done) {
         this.done = done;
         return this;
     }
 
-    /**
-     * Executes the {@link Action} into a new {@link Thread} and gives feedback
-     * if any subscription is implemented.
-     */
     public void run() {
         if (action != null) {
             if (subscribeOnMainThread) {
@@ -128,9 +71,6 @@ public final class AsyncObject<O> {
         }
     }
 
-    /**
-     * Creates a {@link Runnable} using an {@link Action}.
-     */
     private Runnable obtainRunnable() {
         if (runnable == null) {
             runnable = new Runnable() {

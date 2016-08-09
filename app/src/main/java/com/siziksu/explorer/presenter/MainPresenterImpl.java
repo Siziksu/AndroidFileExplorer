@@ -1,15 +1,20 @@
 package com.siziksu.explorer.presenter;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 
 import com.siziksu.explorer.R;
+import com.siziksu.explorer.common.Constants;
 import com.siziksu.explorer.common.comparators.FileComparator;
 import com.siziksu.explorer.common.files.FileUtils;
+import com.siziksu.explorer.common.files.MimeTypes;
 import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
@@ -101,7 +106,24 @@ public class MainPresenterImpl implements MainPresenter {
             if (newFile.isDirectory()) {
                 directory = newFile;
                 getFiles();
+            } else {
+                try {
+                    tryToOpen(newFile);
+                } catch (Exception e) {
+                    Log.d(Constants.TAG, "No Activity found to handle Intent");
+                }
             }
+        }
+    }
+
+    private void tryToOpen(File newFile) throws Exception {
+        String mimeType = MimeTypes.getMimeTypeFromFile(newFile.getName());
+        Log.d(Constants.TAG, "+++++ Mime Type: " + mimeType);
+        if (mimeType != null) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(newFile), mimeType);
+            view.getActivity().startActivity(intent);
         }
     }
 
