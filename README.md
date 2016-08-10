@@ -7,6 +7,7 @@ File explorer for Android.
 ![Screenshot](art/Screenshot_20160807-130047.png)
 ![Screenshot](art/Screenshot_20160807-130106.png)
 ![Screenshot](art/Screenshot_20160807-130138.png)
+![Screenshot](art/Screenshot_20160810-104433.png)
 
 ## License
 
