@@ -1,6 +1,7 @@
 package com.siziksu.explorer.presenter;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.siziksu.explorer.common.files.FileUtils;
 import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
+import com.siziksu.explorer.common.model.State;
 import com.siziksu.explorer.domain.GetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 import com.siziksu.explorer.ui.view.DividerDecoration;
@@ -27,6 +29,7 @@ import java.util.List;
 public class MainPresenterImpl implements MainPresenter {
 
     private static final String ROOT_PATH = "/";
+    private static final String EXTRAS_STATE = "state";
 
     private MainView view;
 
@@ -43,47 +46,6 @@ public class MainPresenterImpl implements MainPresenter {
         showHidden = true;
         showSymLinks = true;
         files = new ArrayList<>();
-    }
-
-    @Override
-    public void getFiles() {
-        new GetFilesRequest(directory, showHidden, showSymLinks).getFiles(
-                new Success<List<File>>() {
-
-                    @Override
-                    public void success(List<File> response) {
-                        if (view != null) {
-                            files.clear();
-                            if (response != null) {
-                                if (!response.isEmpty()) {
-                                    files.addAll(response);
-                                    Collections.sort(files, new FileComparator());
-                                    view.folderEmpty(false);
-                                } else {
-                                    view.folderEmpty(true);
-                                }
-                            }
-                            if (!FileUtils.isRoot(directory)) {
-                                view.setPath(directory.getAbsolutePath() + "/");
-                            } else {
-                                view.setPath(directory.getAbsolutePath());
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                },
-                new Fail() {
-                    @Override
-                    public void fail(Throwable throwable) {
-
-                    }
-                }, new Done() {
-                    @Override
-                    public void done() {
-
-                    }
-                }
-        );
     }
 
     @Override
@@ -109,14 +71,67 @@ public class MainPresenterImpl implements MainPresenter {
         }
     }
 
-    private void openFile(File newFile) {
-        if (FileUtils.tryOpenWithDefaultMimeType(view.getActivity(), newFile)) {
-            return;
+    @Override
+    public void getFiles() {
+        new GetFilesRequest(directory, showHidden, showSymLinks).getFiles(
+                new Success<List<File>>() {
+
+                    @Override
+                    public void success(List<File> response) {
+                        if (view != null) {
+                            files.clear();
+                            if (response != null) {
+                                if (!response.isEmpty()) {
+                                    files.addAll(response);
+                                    Collections.sort(files, new FileComparator());
+                                    view.folderEmpty(false);
+                                } else {
+                                    view.folderEmpty(true);
+                                }
+                            }
+                            setPath();
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                },
+                new Fail() {
+                    @Override
+                    public void fail(Throwable throwable) {
+
+                    }
+                }, new Done() {
+                    @Override
+                    public void done() {
+
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        State state = new State();
+        state.setDirectory(directory);
+        state.setFiles(files);
+        outState.putParcelable(EXTRAS_STATE, state);
+    }
+
+    @Override
+    public void getFiles(Bundle savedInstanceState) {
+        if (view != null) {
+            State state = getState(savedInstanceState);
+            if (state != null) {
+                directory = state.getDirectory();
+                if (!state.getFiles().isEmpty()) {
+                    files.addAll(state.getFiles());
+                    adapter.notifyDataSetChanged();
+                    view.folderEmpty(false);
+                } else {
+                    view.folderEmpty(true);
+                }
+                setPath();
+            }
         }
-        if (FileUtils.tryOpenAsPlainText(view.getActivity(), newFile)) {
-            return;
-        }
-        Log.d(Constants.TAG, "No Activity found to handle the Intent");
     }
 
     @Override
@@ -127,6 +142,17 @@ public class MainPresenterImpl implements MainPresenter {
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
         recyclerView.addItemDecoration(dividerItemDecoration);
+    }
+
+    @Override
+    public void fullScroll(final HorizontalScrollView view) {
+        view.post(new Runnable() {
+
+            @Override
+            public void run() {
+                view.fullScroll(View.FOCUS_RIGHT);
+            }
+        });
     }
 
     @Override
@@ -142,15 +168,28 @@ public class MainPresenterImpl implements MainPresenter {
         }
     }
 
-    @Override
-    public void fullScroll(final HorizontalScrollView view) {
-        view.post(new Runnable() {
-
-            @Override
-            public void run() {
-                view.fullScroll(View.FOCUS_RIGHT);
-            }
-        });
+    private void setPath() {
+        if (!FileUtils.isRoot(directory)) {
+            view.setPath(directory.getAbsolutePath() + "/");
+        } else {
+            view.setPath(directory.getAbsolutePath());
+        }
     }
 
+    private State getState(Bundle savedInstanceState) {
+        if (savedInstanceState.containsKey(EXTRAS_STATE)) {
+            return savedInstanceState.getParcelable(EXTRAS_STATE);
+        }
+        return null;
+    }
+
+    private void openFile(File newFile) {
+        if (FileUtils.tryOpenWithDefaultMimeType(view.getActivity(), newFile)) {
+            return;
+        }
+        if (FileUtils.tryOpenAsPlainText(view.getActivity(), newFile)) {
+            return;
+        }
+        Log.d(Constants.TAG, "No Activity found to handle the Intent");
+    }
 }

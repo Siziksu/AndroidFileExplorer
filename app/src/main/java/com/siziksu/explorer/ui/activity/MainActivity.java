@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
     private TextView folder;
     private TextView emptyFolder;
     private HorizontalScrollView horizontalScrollView;
+    private Bundle savedState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +34,26 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
         horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
         presenter = new MainPresenterImpl();
         presenter.setRecyclerView(this, R.id.recyclerView, this);
+        if (savedInstanceState != null) {
+            savedState = savedInstanceState;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         presenter.register(this);
-        presenter.getFiles();
+        if (savedState == null) {
+            presenter.getFiles();
+        } else {
+            presenter.getFiles(savedState);
+        }
     }
 
     @Override
