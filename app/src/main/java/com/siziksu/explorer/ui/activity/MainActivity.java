@@ -8,16 +8,16 @@ import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
+import com.siziksu.explorer.App;
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.ActivityCommon;
-import com.siziksu.explorer.presenter.MainPresenter;
-import com.siziksu.explorer.presenter.MainPresenterImpl;
-import com.siziksu.explorer.presenter.MainView;
+import com.siziksu.explorer.presenter.IFilesPresenter;
+import com.siziksu.explorer.presenter.IFilesView;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 
-public class MainActivity extends AppCompatActivity implements MainView, FilesAdapter.OnAdapterListener {
+public class MainActivity extends AppCompatActivity implements IFilesView, FilesAdapter.OnAdapterListener {
 
-    private MainPresenter presenter;
+    private IFilesPresenter presenter;
     private TextView folder;
     private TextView emptyFolder;
     private HorizontalScrollView horizontalScrollView;
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MainView, FilesAd
         folder = (TextView) findViewById(R.id.folder);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
         horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
-        presenter = new MainPresenterImpl();
+        presenter = App.filesModule().getWeather();
         presenter.setRecyclerView(this, R.id.recyclerView, this);
         if (savedInstanceState != null) {
             savedState = savedInstanceState;

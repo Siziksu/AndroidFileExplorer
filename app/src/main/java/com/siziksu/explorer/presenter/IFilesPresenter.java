@@ -4,19 +4,22 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.HorizontalScrollView;
 
+import com.siziksu.explorer.domain.IGetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 
-public interface MainPresenter {
+public interface IFilesPresenter {
 
-    void register(MainView view);
+    void register(IFilesView view);
 
     void unregister();
+
+    IFilesPresenter setGetFilesRequest(IGetFilesRequest getFilesData);
+
+    void onSaveInstanceState(Bundle outState);
 
     void fileClicked(int position);
 
     void getFiles();
-
-    void onSaveInstanceState(Bundle outState);
 
     void getFiles(Bundle savedInstanceState);
 

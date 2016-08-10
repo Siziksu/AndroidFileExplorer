@@ -17,7 +17,7 @@ import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
 import com.siziksu.explorer.common.model.State;
-import com.siziksu.explorer.domain.GetFilesRequest;
+import com.siziksu.explorer.domain.IGetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 import com.siziksu.explorer.ui.view.DividerDecoration;
 
@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainPresenterImpl implements MainPresenter {
+public class FilesPresenter implements IFilesPresenter {
 
     private static final String ROOT_PATH = "/";
     private static final String EXTRAS_STATE = "state";
 
-    private MainView view;
+    private IFilesView view;
 
     private File directory;
     private List<File> files;
@@ -40,8 +40,9 @@ public class MainPresenterImpl implements MainPresenter {
 
     private boolean showHidden;
     private boolean showSymLinks;
+    private IGetFilesRequest getFilesData;
 
-    public MainPresenterImpl() {
+    public FilesPresenter() {
         directory = new File(ROOT_PATH);
         showHidden = true;
         showSymLinks = true;
@@ -49,13 +50,27 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     @Override
-    public void register(MainView view) {
+    public void register(IFilesView view) {
         this.view = view;
     }
 
     @Override
     public void unregister() {
         view = null;
+    }
+
+    @Override
+    public FilesPresenter setGetFilesRequest(IGetFilesRequest getFilesData) {
+        this.getFilesData = getFilesData;
+        return this;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        State state = new State();
+        state.setDirectory(directory);
+        state.setFiles(files);
+        outState.putParcelable(EXTRAS_STATE, state);
     }
 
     @Override
@@ -73,47 +88,40 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void getFiles() {
-        new GetFilesRequest(directory, showHidden, showSymLinks).getFiles(
-                new Success<List<File>>() {
+        getFilesData.init(directory, showHidden, showSymLinks)
+                    .getFiles(
+                            new Success<List<File>>() {
 
-                    @Override
-                    public void success(List<File> response) {
-                        if (view != null) {
-                            files.clear();
-                            if (response != null) {
-                                if (!response.isEmpty()) {
-                                    files.addAll(response);
-                                    Collections.sort(files, new FileComparator());
-                                    view.folderEmpty(false);
-                                } else {
-                                    view.folderEmpty(true);
+                                @Override
+                                public void success(List<File> response) {
+                                    if (view != null) {
+                                        files.clear();
+                                        if (response != null) {
+                                            if (!response.isEmpty()) {
+                                                files.addAll(response);
+                                                Collections.sort(files, new FileComparator());
+                                                view.folderEmpty(false);
+                                            } else {
+                                                view.folderEmpty(true);
+                                            }
+                                        }
+                                        setPath();
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }
+                            },
+                            new Fail() {
+                                @Override
+                                public void fail(Throwable throwable) {
+
+                                }
+                            }, new Done() {
+                                @Override
+                                public void done() {
+
                                 }
                             }
-                            setPath();
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                },
-                new Fail() {
-                    @Override
-                    public void fail(Throwable throwable) {
-
-                    }
-                }, new Done() {
-                    @Override
-                    public void done() {
-
-                    }
-                }
-        );
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        State state = new State();
-        state.setDirectory(directory);
-        state.setFiles(files);
-        outState.putParcelable(EXTRAS_STATE, state);
+                    );
     }
 
     @Override

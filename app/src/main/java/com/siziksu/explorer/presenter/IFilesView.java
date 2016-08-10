@@ -2,7 +2,7 @@ package com.siziksu.explorer.presenter;
 
 import android.app.Activity;
 
-public interface MainView {
+public interface IFilesView {
 
     Activity getActivity();
 

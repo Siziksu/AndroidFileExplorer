@@ -1,4 +1,4 @@
-# Explorer
+# File Explorer
 
 File explorer for Android.
 
