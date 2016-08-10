@@ -29,7 +29,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.list_item_detail, parent, false);
+        View view = inflater.inflate(R.layout.entry_detail, parent, false);
         return new MainViewHolder(view);
     }
 
@@ -68,10 +68,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
     @Override
     public int getItemCount() {
         return files.size();
-    }
-
-    public void setFiles(List<File> files) {
-        this.files = files;
     }
 
     class BaseViewHolder extends RecyclerView.ViewHolder {

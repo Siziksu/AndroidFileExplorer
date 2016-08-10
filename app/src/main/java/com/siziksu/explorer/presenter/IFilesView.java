@@ -6,7 +6,5 @@ public interface IFilesView {
 
     Activity getActivity();
 
-    void setPath(String path);
-
     void folderEmpty(boolean value);
 }

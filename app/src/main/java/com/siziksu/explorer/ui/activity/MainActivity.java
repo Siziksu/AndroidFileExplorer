@@ -2,25 +2,25 @@ package com.siziksu.explorer.ui.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import com.siziksu.explorer.App;
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.ActivityCommon;
+import com.siziksu.explorer.common.PermissionManager;
 import com.siziksu.explorer.presenter.IFilesPresenter;
 import com.siziksu.explorer.presenter.IFilesView;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
+import com.siziksu.explorer.ui.adapter.HeaderAdapter;
 
-public class MainActivity extends AppCompatActivity implements IFilesView, FilesAdapter.OnAdapterListener {
+public class MainActivity extends AppCompatActivity implements IFilesView {
 
     private IFilesPresenter presenter;
-    private TextView folder;
     private TextView emptyFolder;
-    private HorizontalScrollView horizontalScrollView;
     private Bundle savedState;
 
     @Override
@@ -29,11 +29,10 @@ public class MainActivity extends AppCompatActivity implements IFilesView, Files
         setContentView(R.layout.activity_main);
         Toolbar defaultToolbar = (Toolbar) findViewById(R.id.defaultToolbar);
         ActivityCommon.get().applyToolBarStyleWithHome(this, defaultToolbar);
-        folder = (TextView) findViewById(R.id.folder);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
-        horizontalScrollView = (HorizontalScrollView) findViewById(R.id.horizontalScrollView);
         presenter = App.filesModule().getWeather();
-        presenter.setRecyclerView(this, R.id.recyclerView, this);
+        presenter.setHeader(this, R.id.headerRecyclerView, new HeaderAdapterListener());
+        presenter.setRecyclerView(this, R.id.recyclerView, new FileAdapterListener());
         if (savedInstanceState != null) {
             savedState = savedInstanceState;
         }
@@ -48,12 +47,19 @@ public class MainActivity extends AppCompatActivity implements IFilesView, Files
     @Override
     protected void onResume() {
         super.onResume();
+        PermissionManager.get().verifyStoragePermissions(this);
         presenter.register(this);
         if (savedState == null) {
             presenter.getFiles();
         } else {
             presenter.getFiles(savedState);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.get().onRequestPermissions();
     }
 
     @Override
@@ -75,21 +81,29 @@ public class MainActivity extends AppCompatActivity implements IFilesView, Files
     }
 
     @Override
-    public void setPath(String path) {
-        folder.setText(path);
-        presenter.fullScroll(horizontalScrollView);
-    }
-
-    @Override
     public void folderEmpty(boolean value) {
         emptyFolder.setVisibility(value ? View.VISIBLE : View.INVISIBLE);
     }
 
-    @Override
-    public void onItemClick(int position) {
-        presenter.fileClicked(position);
+    private class FileAdapterListener implements FilesAdapter.OnAdapterListener {
+
+        @Override
+        public void onItemClick(int position) {
+            presenter.fileClicked(position);
+        }
+
+        @Override
+        public void onEndOfListReached() { }
     }
 
-    @Override
-    public void onEndOfListReached() { }
+    private class HeaderAdapterListener implements HeaderAdapter.OnAdapterListener {
+
+        @Override
+        public void onItemClick(int position) {
+            presenter.folderClicked(position);
+        }
+
+        @Override
+        public void onEndOfListReached() { }
+    }
 }

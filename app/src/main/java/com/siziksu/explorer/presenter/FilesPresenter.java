@@ -6,8 +6,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.HorizontalScrollView;
 
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.Constants;
@@ -16,9 +14,12 @@ import com.siziksu.explorer.common.files.FileUtils;
 import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
+import com.siziksu.explorer.common.model.Folder;
 import com.siziksu.explorer.common.model.State;
 import com.siziksu.explorer.domain.IGetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
+import com.siziksu.explorer.ui.adapter.HeaderAdapter;
+import com.siziksu.explorer.ui.view.SmoothLayoutManager;
 import com.siziksu.explorer.ui.view.DividerDecoration;
 
 import java.io.File;
@@ -34,19 +35,25 @@ public class FilesPresenter implements IFilesPresenter {
     private IFilesView view;
 
     private File directory;
+    private List<Folder> folders;
     private List<File> files;
 
-    private FilesAdapter adapter;
+    private HeaderAdapter headerAdapter;
+    private FilesAdapter filesAdapter;
 
     private boolean showHidden;
     private boolean showSymLinks;
     private IGetFilesRequest getFilesData;
+
+    private RecyclerView headerRecyclerView;
 
     public FilesPresenter() {
         directory = new File(ROOT_PATH);
         showHidden = true;
         showSymLinks = true;
         files = new ArrayList<>();
+        folders = new ArrayList<>();
+        folders.add(new Folder(ROOT_PATH, directory));
     }
 
     @Override
@@ -80,10 +87,22 @@ public class FilesPresenter implements IFilesPresenter {
             if (newFile.isDirectory()) {
                 directory = newFile;
                 getFiles();
+                folders.add(new Folder(directory.getName(), directory));
+                headerAdapter.notifyDataSetChanged();
+                scrollHeaderToEnd();
             } else {
                 openFile(newFile);
             }
         }
+    }
+
+    @Override
+    public void folderClicked(int position) {
+        directory = folders.get(position).getFolder();
+        for (int i = folders.size() - 1; i > position; i--) {
+            folders.remove(i);
+        }
+        getFiles();
     }
 
     @Override
@@ -105,8 +124,7 @@ public class FilesPresenter implements IFilesPresenter {
                                                 view.folderEmpty(true);
                                             }
                                         }
-                                        setPath();
-                                        adapter.notifyDataSetChanged();
+                                        filesAdapter.notifyDataSetChanged();
                                     }
                                 }
                             },
@@ -132,35 +150,32 @@ public class FilesPresenter implements IFilesPresenter {
                 directory = state.getDirectory();
                 if (!state.getFiles().isEmpty()) {
                     files.addAll(state.getFiles());
-                    adapter.notifyDataSetChanged();
+                    filesAdapter.notifyDataSetChanged();
                     view.folderEmpty(false);
                 } else {
                     view.folderEmpty(true);
                 }
-                setPath();
+                scrollHeaderToEnd();
             }
         }
+    }
+
+    @Override
+    public void setHeader(Activity activity, int id, HeaderAdapter.OnAdapterListener listener) {
+        headerRecyclerView = (RecyclerView) activity.findViewById(id);
+        headerRecyclerView.setLayoutManager(new SmoothLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+        headerAdapter = new HeaderAdapter(activity, folders, listener);
+        headerRecyclerView.setAdapter(headerAdapter);
     }
 
     @Override
     public void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener) {
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(id);
         recyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        adapter = new FilesAdapter(activity, files, listener);
-        recyclerView.setAdapter(adapter);
+        filesAdapter = new FilesAdapter(activity, files, listener);
+        recyclerView.setAdapter(filesAdapter);
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
         recyclerView.addItemDecoration(dividerItemDecoration);
-    }
-
-    @Override
-    public void fullScroll(final HorizontalScrollView view) {
-        view.post(new Runnable() {
-
-            @Override
-            public void run() {
-                view.fullScroll(View.FOCUS_RIGHT);
-            }
-        });
     }
 
     @Override
@@ -171,17 +186,16 @@ public class FilesPresenter implements IFilesPresenter {
             if (directory.getParentFile() != null) {
                 directory = directory.getParentFile();
                 getFiles();
+                folders.remove(folders.size() - 1);
+                headerAdapter.notifyDataSetChanged();
+                scrollHeaderToEnd();
             }
             return false;
         }
     }
 
-    private void setPath() {
-        if (!FileUtils.isRoot(directory)) {
-            view.setPath(directory.getAbsolutePath() + "/");
-        } else {
-            view.setPath(directory.getAbsolutePath());
-        }
+    private void scrollHeaderToEnd() {
+        headerRecyclerView.smoothScrollToPosition(folders.size() - 1);
     }
 
     private State getState(Bundle savedInstanceState) {

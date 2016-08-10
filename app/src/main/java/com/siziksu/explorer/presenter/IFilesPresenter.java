@@ -2,10 +2,10 @@ package com.siziksu.explorer.presenter;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.HorizontalScrollView;
 
 import com.siziksu.explorer.domain.IGetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
+import com.siziksu.explorer.ui.adapter.HeaderAdapter;
 
 public interface IFilesPresenter {
 
@@ -19,13 +19,15 @@ public interface IFilesPresenter {
 
     void fileClicked(int position);
 
+    void folderClicked(int position);
+
     void getFiles();
 
     void getFiles(Bundle savedInstanceState);
 
-    void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
+    void setHeader(Activity activity, int id, HeaderAdapter.OnAdapterListener listener);
 
-    void fullScroll(HorizontalScrollView view);
+    void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
 
     boolean onBackPressed();
 }

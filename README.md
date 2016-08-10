@@ -4,10 +4,12 @@ File explorer for Android.
 
 # Screenshots
 
-![Screenshot](art/Screenshot_20160807-130047.png)
-![Screenshot](art/Screenshot_20160807-130106.png)
-![Screenshot](art/Screenshot_20160807-130138.png)
-![Screenshot](art/Screenshot_20160810-104433.png)
+![Screenshot](art/Screenshot_20160810-212428.png)
+![Screenshot](art/Screenshot_20160810-212504.png)
+![Screenshot](art/Screenshot_20160810-212513.png)
+![Screenshot](art/Screenshot_20160810-212543.png)
+![Screenshot](art/Screenshot_20160810-212544.png)
+![Screenshot](art/Screenshot_20160810-212545.png)
 
 ## License
 

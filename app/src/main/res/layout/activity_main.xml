@@ -7,28 +7,22 @@
         android:id="@+id/defaultToolbar"
         layout="@layout/toolbar_default" />
 
-    <HorizontalScrollView
+    <RelativeLayout
         android:layout_below="@+id/defaultToolbar"
-        android:id="@+id/horizontalScrollView"
+        android:id="@+id/headerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:background="@color/blue"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:background="@color/blue">
 
-        <TextView
-            android:id="@+id/folder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:padding="5dp" />
-    </HorizontalScrollView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/headerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/horizontalScrollView"
+        android:layout_below="@+id/headerView"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
