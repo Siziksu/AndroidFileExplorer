@@ -3,11 +3,15 @@ package com.siziksu.explorer.common.files;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
+
+import com.siziksu.explorer.common.Constants;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class FileUtils {
@@ -69,6 +73,21 @@ public class FileUtils {
             intent.setAction(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(newFile), mimeType);
             context.startActivity(intent);
+        }
+    }
+
+    public static void printFiles(List<File> files) {
+        String string;
+        for (File file : files) {
+            string = file.isDirectory() ? "[FOL]" : "";
+            string += file.isHidden() ? "[HID]" : "";
+            string += FileUtils.isSymlink(file) ? "[LIN]" : "";
+            try {
+                string += " " + file.getCanonicalPath();
+            } catch (IOException e) {
+                Log.d(Constants.TAG, e.getMessage(), e);
+            }
+            Log.d(Constants.TAG, string);
         }
     }
 }

@@ -19,8 +19,8 @@ import com.siziksu.explorer.common.model.State;
 import com.siziksu.explorer.domain.IGetFilesRequest;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 import com.siziksu.explorer.ui.adapter.HeaderAdapter;
-import com.siziksu.explorer.ui.view.SmoothLayoutManager;
 import com.siziksu.explorer.ui.view.DividerDecoration;
+import com.siziksu.explorer.ui.view.SmoothLayoutManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,7 +146,7 @@ public class FilesPresenter implements IFilesPresenter {
     @Override
     public void getFiles(Bundle savedInstanceState) {
         if (view != null) {
-            if(files.isEmpty()) {
+            if (files.isEmpty()) {
                 State state = getState(savedInstanceState);
                 if (state != null) {
                     directory = state.getDirectory();

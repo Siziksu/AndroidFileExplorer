@@ -10,12 +10,15 @@ public class FileComparator implements Comparator<File> {
         if (f1 == f2) {
             return 0;
         }
-        if (f1.isDirectory() && f2.isFile()) {
-            return -1; // Show directories above files
+        if (f1.isDirectory() && !f2.isDirectory()) {
+            // Directory before non-directory
+            return -1;
+        } else if (!f1.isDirectory() && f2.isDirectory()) {
+            // Non-directory after directory
+            return 1;
+        } else {
+            // Otherwise alphabetic order
+            return f1.compareTo(f2);
         }
-        if (f1.isFile() && f2.isDirectory()) {
-            return 1; // Show files below directories
-        }
-        return f1.getName().compareToIgnoreCase(f2.getName()); // Sort alphabetically
     }
 }
