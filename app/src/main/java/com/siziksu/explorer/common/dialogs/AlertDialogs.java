@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.siziksu.explorer.common.Constants;
 
 public class AlertDialogs {
 
@@ -72,6 +75,10 @@ public class AlertDialogs {
             builder.setNegativeButton(negative, negativeListener);
         }
         AlertDialog dialog = builder.create();
-        dialog.show();
+        try {
+            dialog.show();
+        } catch (Exception e) {
+            Log.d(Constants.TAG, e.getMessage(), e);
+        }
     }
 }

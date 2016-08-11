@@ -96,10 +96,12 @@ public class FilesPresenter implements IFilesPresenter {
                     openFile(file);
                 }
             } else {
-                AlertDialogs.get(view.getActivity())
-                            .message(view.getActivity().getString(R.string.no_read_permission_message))
-                            .positiveButtonText(view.getActivity().getString(android.R.string.ok))
-                            .show();
+                if (view != null && !view.getActivity().isFinishing()) {
+                    AlertDialogs.get(view.getActivity())
+                                .message(view.getActivity().getString(R.string.no_read_permission_message))
+                                .positiveButtonText(view.getActivity().getString(android.R.string.ok))
+                                .show();
+                }
             }
         }
     }
