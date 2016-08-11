@@ -102,6 +102,7 @@ public class FilesPresenter implements IFilesPresenter {
         for (int i = folders.size() - 1; i > position; i--) {
             folders.remove(i);
         }
+        headerAdapter.notifyDataSetChanged();
         getFiles();
     }
 
