@@ -1,6 +1,7 @@
 package com.siziksu.explorer.ui.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +18,13 @@ import java.util.List;
 
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHolder> {
 
+    private final Context context;
     private final OnAdapterListener listener;
     private final LayoutInflater inflater;
     private List<File> files;
 
     public FilesAdapter(Context context, List<File> files, OnAdapterListener listener) {
+        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.files = files;
         this.listener = listener;
@@ -53,6 +56,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
         date = FileUtils.fileDate(file);
         ((MainViewHolder) holder).fileImage.setImageResource(image);
         ((MainViewHolder) holder).fileName.setText(name);
+        ((MainViewHolder) holder).fileName.setTextColor(ContextCompat.getColor(context, file.isHidden() ? R.color.hidden : R.color.dark));
         ((MainViewHolder) holder).filePermissions.setText(permissions);
         ((MainViewHolder) holder).fileDate.setText(date);
         if (listener != null && position == files.size() - 1) {

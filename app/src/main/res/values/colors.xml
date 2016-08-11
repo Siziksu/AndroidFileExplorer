@@ -2,5 +2,6 @@
 <resources>
     <color name="red">#ffff0000</color>
     <color name="blue">#962196f3</color>
+    <color name="hidden">#5382ef</color>
     <color name="header_blue">#11000000</color>
 </resources>
