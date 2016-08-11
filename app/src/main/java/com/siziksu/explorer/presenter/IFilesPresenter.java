@@ -25,9 +25,9 @@ public interface IFilesPresenter {
 
     void getFiles(Bundle savedInstanceState);
 
-    void setHeader(Activity activity, int id, HeaderAdapter.OnAdapterListener listener);
+    void setHeaderView(Activity activity, int id, HeaderAdapter.OnAdapterListener listener);
 
-    void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
+    void setFilesView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
 
     boolean onBackPressed();
 }

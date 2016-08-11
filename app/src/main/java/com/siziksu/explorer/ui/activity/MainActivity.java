@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
         ActivityCommon.get().applyToolBarStyleWithHome(this, defaultToolbar);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
         presenter = App.filesModule().getWeather();
-        presenter.setHeader(this, R.id.headerRecyclerView, new HeaderAdapterListener());
-        presenter.setRecyclerView(this, R.id.recyclerView, new FileAdapterListener());
+        presenter.setHeaderView(this, R.id.headerView, new HeaderAdapterListener());
+        presenter.setFilesView(this, R.id.filesView, new FileAdapterListener());
         if (savedInstanceState != null) {
             savedState = savedInstanceState;
         }

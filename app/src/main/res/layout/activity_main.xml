@@ -9,21 +9,21 @@
 
     <RelativeLayout
         android:layout_below="@+id/defaultToolbar"
-        android:id="@+id/headerView"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:background="@color/blue">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/headerRecyclerView"
+            android:id="@+id/headerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/headerView"
-        android:id="@+id/recyclerView"
+        android:layout_below="@+id/header"
+        android:id="@+id/filesView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

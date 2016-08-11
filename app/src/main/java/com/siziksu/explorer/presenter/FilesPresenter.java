@@ -46,7 +46,7 @@ public class FilesPresenter implements IFilesPresenter {
     private boolean showSymLinks;
     private IGetFilesRequest getFilesData;
 
-    private RecyclerView headerRecyclerView;
+    private RecyclerView headerView;
 
     public FilesPresenter() {
         directory = new File(ROOT_PATH);
@@ -177,21 +177,21 @@ public class FilesPresenter implements IFilesPresenter {
     }
 
     @Override
-    public void setHeader(Activity activity, int id, HeaderAdapter.OnAdapterListener listener) {
-        headerRecyclerView = (RecyclerView) activity.findViewById(id);
-        headerRecyclerView.setLayoutManager(new SmoothLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
+    public void setHeaderView(Activity activity, int id, HeaderAdapter.OnAdapterListener listener) {
+        headerView = (RecyclerView) activity.findViewById(id);
+        headerView.setLayoutManager(new SmoothLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
         headerAdapter = new HeaderAdapter(activity, folders, listener);
-        headerRecyclerView.setAdapter(headerAdapter);
+        headerView.setAdapter(headerAdapter);
     }
 
     @Override
-    public void setRecyclerView(Activity activity, int id, FilesAdapter.OnAdapterListener listener) {
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(id);
-        recyclerView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
+    public void setFilesView(Activity activity, int id, FilesAdapter.OnAdapterListener listener) {
+        RecyclerView filesView = (RecyclerView) activity.findViewById(id);
+        filesView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
         filesAdapter = new FilesAdapter(activity, files, listener);
-        recyclerView.setAdapter(filesAdapter);
+        filesView.setAdapter(filesAdapter);
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        filesView.addItemDecoration(dividerItemDecoration);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class FilesPresenter implements IFilesPresenter {
     }
 
     private void scrollHeaderToEnd() {
-        headerRecyclerView.smoothScrollToPosition(folders.size() - 1);
+        headerView.smoothScrollToPosition(folders.size() - 1);
     }
 
     private State getState(Bundle savedInstanceState) {
