@@ -14,8 +14,6 @@ import com.siziksu.explorer.common.ActivityCommon;
 import com.siziksu.explorer.common.PermissionManager;
 import com.siziksu.explorer.presenter.IFilesPresenter;
 import com.siziksu.explorer.presenter.IFilesView;
-import com.siziksu.explorer.ui.adapter.FilesAdapter;
-import com.siziksu.explorer.ui.adapter.HeaderAdapter;
 
 public class MainActivity extends AppCompatActivity implements IFilesView {
 
@@ -31,8 +29,8 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
         ActivityCommon.get().applyToolBarStyleWithHome(this, defaultToolbar);
         emptyFolder = (TextView) findViewById(R.id.emptyFolder);
         presenter = App.filesModule().getWeather();
-        presenter.setHeaderView(this, R.id.headerView, new HeaderAdapterListener());
-        presenter.setFilesView(this, R.id.filesView, new FileAdapterListener());
+        presenter.setHeaderView(this, R.id.headerView);
+        presenter.setFilesView(this, R.id.filesView);
         if (savedInstanceState != null) {
             savedState = savedInstanceState;
         }
@@ -83,27 +81,5 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
     @Override
     public void folderEmpty(boolean value) {
         emptyFolder.setVisibility(value ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    private class FileAdapterListener implements FilesAdapter.OnAdapterListener {
-
-        @Override
-        public void onItemClick(int position) {
-            presenter.fileClicked(position);
-        }
-
-        @Override
-        public void onEndOfListReached() { }
-    }
-
-    private class HeaderAdapterListener implements HeaderAdapter.OnAdapterListener {
-
-        @Override
-        public void onItemClick(int position) {
-            presenter.folderClicked(position);
-        }
-
-        @Override
-        public void onEndOfListReached() { }
     }
 }

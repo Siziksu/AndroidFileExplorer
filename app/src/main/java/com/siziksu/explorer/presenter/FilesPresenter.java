@@ -82,69 +82,33 @@ public class FilesPresenter implements IFilesPresenter {
     }
 
     @Override
-    public void fileClicked(int position) {
-        File file = files.get(position);
-        if (file != null) {
-            if (file.canRead()) {
-                if (file.isDirectory()) {
-                    directory = file;
-                    getFiles();
-                    folders.add(new Folder(directory.getName(), directory));
-                    headerAdapter.notifyDataSetChanged();
-                    scrollHeaderToEnd();
-                } else {
-                    openFile(file);
-                }
-            } else {
-                if (view != null && !view.getActivity().isFinishing()) {
-                    AlertDialogs.get(view.getActivity())
-                                .message(view.getActivity().getString(R.string.no_read_permission_message))
-                                .positiveButtonText(view.getActivity().getString(android.R.string.ok))
-                                .show();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void folderClicked(int position) {
-        directory = folders.get(position).getFolder();
-        for (int i = folders.size() - 1; i > position; i--) {
-            folders.remove(i);
-        }
-        headerAdapter.notifyDataSetChanged();
-        getFiles();
-    }
-
-    @Override
     public void getFiles() {
         getFilesData.init(directory, showHidden, showSymLinks)
-                    .getFiles(
-                            new Success<List<File>>() {
+                    .getFiles(new Success<List<File>>() {
 
-                                @Override
-                                public void success(List<File> response) {
-                                    if (view != null) {
-                                        files.clear();
-                                        if (response != null) {
-                                            if (!response.isEmpty()) {
-                                                files.addAll(response);
-                                                Collections.sort(files, new FileComparator());
-                                                view.folderEmpty(false);
-                                            } else {
-                                                view.folderEmpty(true);
-                                            }
-                                        }
-                                        filesAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            },
-                            new Fail() {
-                                @Override
-                                public void fail(Throwable throwable) {
+                                  @Override
+                                  public void success(List<File> response) {
+                                      if (view != null) {
+                                          files.clear();
+                                          if (response != null) {
+                                              if (!response.isEmpty()) {
+                                                  files.addAll(response);
+                                                  Collections.sort(files, new FileComparator());
+                                                  view.folderEmpty(false);
+                                              } else {
+                                                  view.folderEmpty(true);
+                                              }
+                                          }
+                                          filesAdapter.notifyDataSetChanged();
+                                      }
+                                  }
+                              },
+                              new Fail() {
+                                  @Override
+                                  public void fail(Throwable throwable) {
 
-                                }
-                            }, new Done() {
+                                  }
+                              }, new Done() {
                                 @Override
                                 public void done() {
 
@@ -177,18 +141,18 @@ public class FilesPresenter implements IFilesPresenter {
     }
 
     @Override
-    public void setHeaderView(Activity activity, int id, HeaderAdapter.OnAdapterListener listener) {
+    public void setHeaderView(Activity activity, int id) {
         headerView = (RecyclerView) activity.findViewById(id);
         headerView.setLayoutManager(new SmoothLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
-        headerAdapter = new HeaderAdapter(activity, folders, listener);
+        headerAdapter = new HeaderAdapter(activity, folders, new HeaderAdapterListener());
         headerView.setAdapter(headerAdapter);
     }
 
     @Override
-    public void setFilesView(Activity activity, int id, FilesAdapter.OnAdapterListener listener) {
+    public void setFilesView(Activity activity, int id) {
         RecyclerView filesView = (RecyclerView) activity.findViewById(id);
         filesView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        filesAdapter = new FilesAdapter(activity, files, listener);
+        filesAdapter = new FilesAdapter(activity, files, new FileAdapterListener());
         filesView.setAdapter(filesAdapter);
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
         filesView.addItemDecoration(dividerItemDecoration);
@@ -228,6 +192,47 @@ public class FilesPresenter implements IFilesPresenter {
         if (FileUtils.tryOpenAsPlainText(view.getActivity(), file)) {
             return;
         }
-        Log.d(Constants.TAG, "No Activity found to handle the Intent");
+        Log.e(Constants.TAG, "No Activity found to handle the Intent");
+    }
+
+    private class FileAdapterListener implements FilesAdapter.OnAdapterListener {
+
+        @Override
+        public void onItemClick(int position) {
+            File file = files.get(position);
+            if (file != null) {
+                if (file.canRead()) {
+                    if (file.isDirectory()) {
+                        directory = file;
+                        getFiles();
+                        folders.add(new Folder(directory.getName(), directory));
+                        headerAdapter.notifyDataSetChanged();
+                        scrollHeaderToEnd();
+                    } else {
+                        openFile(file);
+                    }
+                } else {
+                    if (view != null && !view.getActivity().isFinishing()) {
+                        AlertDialogs.get(view.getActivity())
+                                    .message(view.getActivity().getString(R.string.no_read_permission_message))
+                                    .positiveButtonText(view.getActivity().getString(android.R.string.ok))
+                                    .show();
+                    }
+                }
+            }
+        }
+    }
+
+    private class HeaderAdapterListener implements HeaderAdapter.OnAdapterListener {
+
+        @Override
+        public void onItemClick(int position) {
+            directory = folders.get(position).getFolder();
+            for (int i = folders.size() - 1; i > position; i--) {
+                folders.remove(i);
+            }
+            headerAdapter.notifyDataSetChanged();
+            getFiles();
+        }
     }
 }

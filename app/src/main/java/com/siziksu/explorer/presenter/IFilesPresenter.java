@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.siziksu.explorer.domain.IGetFilesRequest;
-import com.siziksu.explorer.ui.adapter.FilesAdapter;
-import com.siziksu.explorer.ui.adapter.HeaderAdapter;
 
 public interface IFilesPresenter {
 
@@ -17,17 +15,13 @@ public interface IFilesPresenter {
 
     void onSaveInstanceState(Bundle outState);
 
-    void fileClicked(int position);
-
-    void folderClicked(int position);
-
     void getFiles();
 
     void getFiles(Bundle savedInstanceState);
 
-    void setHeaderView(Activity activity, int id, HeaderAdapter.OnAdapterListener listener);
+    void setHeaderView(Activity activity, int id);
 
-    void setFilesView(Activity activity, int id, FilesAdapter.OnAdapterListener listener);
+    void setFilesView(Activity activity, int id);
 
     boolean onBackPressed();
 }

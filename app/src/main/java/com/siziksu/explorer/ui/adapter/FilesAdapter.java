@@ -63,9 +63,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
         ((MainViewHolder) holder).fileName.setTextColor(ContextCompat.getColor(context, file.isHidden() ? R.color.hidden : R.color.dark));
         ((MainViewHolder) holder).filePermissions.setText(permissions);
         ((MainViewHolder) holder).fileDate.setText(date);
-        if (listener != null && position == files.size() - 1) {
-            listener.onEndOfListReached();
-        }
     }
 
     @Override
@@ -112,7 +109,5 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
     public interface OnAdapterListener {
 
         void onItemClick(int position);
-
-        void onEndOfListReached();
     }
 }

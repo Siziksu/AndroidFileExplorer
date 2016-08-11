@@ -36,9 +36,6 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.BaseViewHo
         final Folder folder = folders.get(position);
         ((MainViewHolder) holder).pathSeparator.setVisibility((position == 0) ? View.GONE : View.VISIBLE);
         ((MainViewHolder) holder).folder.setText(folder.getName());
-        if (listener != null && position == folders.size() - 1) {
-            listener.onEndOfListReached();
-        }
     }
 
     @Override
@@ -79,7 +76,5 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.BaseViewHo
     public interface OnAdapterListener {
 
         void onItemClick(int position);
-
-        void onEndOfListReached();
     }
 }

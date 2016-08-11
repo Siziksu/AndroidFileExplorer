@@ -20,9 +20,7 @@ public final class AsyncObject<O> {
     private Done done;
     private boolean subscribeOnMainThread;
 
-    public AsyncObject() {
-        // Constructor
-    }
+    public AsyncObject() {}
 
     public AsyncObject<O> subscribeOnMainThread() {
         subscribeOnMainThread = true;
@@ -81,8 +79,6 @@ public final class AsyncObject<O> {
                         O response = action.action();
                         if (response != null && success != null) {
                             success(response);
-                        } else {
-                            Log.d("AsyncObject", "Action successfully completed");
                         }
                     } catch (Exception e) {
                         if (fail != null) {
