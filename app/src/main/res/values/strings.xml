@@ -8,4 +8,5 @@
     <string name="empty_folder">Empty folder</string>
     <string name="open_as">Open as</string>
     <string name="header_path_separator">&gt;</string>
+    <string name="no_read_permission_message">The file/folder does not have read permission</string>
 </resources>

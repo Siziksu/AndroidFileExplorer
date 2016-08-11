@@ -48,18 +48,18 @@ public class FileUtils {
         return format.format(date);
     }
 
-    public static boolean tryOpenWithDefaultMimeType(Context context, File newFile) {
+    public static boolean tryOpenWithDefaultMimeType(Context context, File file) {
         try {
-            tryToOpen(context, newFile, null);
+            tryToOpen(context, file, null);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean tryOpenAsPlainText(Context context, File newFile) {
+    public static boolean tryOpenAsPlainText(Context context, File file) {
         try {
-            tryToOpen(context, newFile, "text/plain");
+            tryToOpen(context, file, "text/plain");
             return true;
         } catch (Exception ex) {
             return false;

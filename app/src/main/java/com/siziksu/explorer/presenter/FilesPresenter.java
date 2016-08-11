@@ -10,6 +10,7 @@ import android.util.Log;
 import com.siziksu.explorer.R;
 import com.siziksu.explorer.common.Constants;
 import com.siziksu.explorer.common.comparators.FileComparator;
+import com.siziksu.explorer.common.dialogs.AlertDialogs;
 import com.siziksu.explorer.common.files.FileUtils;
 import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
@@ -82,16 +83,23 @@ public class FilesPresenter implements IFilesPresenter {
 
     @Override
     public void fileClicked(int position) {
-        File newFile = files.get(position);
-        if (newFile != null) {
-            if (newFile.isDirectory()) {
-                directory = newFile;
-                getFiles();
-                folders.add(new Folder(directory.getName(), directory));
-                headerAdapter.notifyDataSetChanged();
-                scrollHeaderToEnd();
+        File file = files.get(position);
+        if (file != null) {
+            if (file.canRead()) {
+                if (file.isDirectory()) {
+                    directory = file;
+                    getFiles();
+                    folders.add(new Folder(directory.getName(), directory));
+                    headerAdapter.notifyDataSetChanged();
+                    scrollHeaderToEnd();
+                } else {
+                    openFile(file);
+                }
             } else {
-                openFile(newFile);
+                AlertDialogs.get(view.getActivity())
+                            .message(view.getActivity().getString(R.string.no_read_permission_message))
+                            .positiveButtonText(view.getActivity().getString(android.R.string.ok))
+                            .show();
             }
         }
     }
@@ -211,11 +219,11 @@ public class FilesPresenter implements IFilesPresenter {
         return null;
     }
 
-    private void openFile(File newFile) {
-        if (FileUtils.tryOpenWithDefaultMimeType(view.getActivity(), newFile)) {
+    private void openFile(File file) {
+        if (FileUtils.tryOpenWithDefaultMimeType(view.getActivity(), file)) {
             return;
         }
-        if (FileUtils.tryOpenAsPlainText(view.getActivity(), newFile)) {
+        if (FileUtils.tryOpenAsPlainText(view.getActivity(), file)) {
             return;
         }
         Log.d(Constants.TAG, "No Activity found to handle the Intent");

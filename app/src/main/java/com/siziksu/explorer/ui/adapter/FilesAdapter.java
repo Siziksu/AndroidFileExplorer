@@ -45,7 +45,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
         String permissions;
         String date;
         if (symlink) {
-            image = R.drawable.system_symlink;
+            if (file.isDirectory()) {
+                image = R.drawable.system_folder_symlink;
+            } else {
+                image = R.drawable.system_file_symlink;
+            }
         } else if (file.isDirectory()) {
             image = R.drawable.system_folder;
         } else {
