@@ -146,16 +146,21 @@ public class FilesPresenter implements IFilesPresenter {
     @Override
     public void getFiles(Bundle savedInstanceState) {
         if (view != null) {
-            State state = getState(savedInstanceState);
-            if (state != null) {
-                directory = state.getDirectory();
-                if (!state.getFiles().isEmpty()) {
-                    files.addAll(state.getFiles());
-                    filesAdapter.notifyDataSetChanged();
-                    view.folderEmpty(false);
-                } else {
-                    view.folderEmpty(true);
+            if(files.isEmpty()) {
+                State state = getState(savedInstanceState);
+                if (state != null) {
+                    directory = state.getDirectory();
+                    if (!state.getFiles().isEmpty()) {
+                        files.addAll(state.getFiles());
+                        filesAdapter.notifyDataSetChanged();
+                        view.folderEmpty(false);
+                    } else {
+                        view.folderEmpty(true);
+                    }
+                    scrollHeaderToEnd();
                 }
+            } else {
+                view.folderEmpty(false);
                 scrollHeaderToEnd();
             }
         }
