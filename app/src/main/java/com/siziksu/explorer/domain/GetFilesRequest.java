@@ -1,7 +1,6 @@
 package com.siziksu.explorer.domain;
 
 import com.siziksu.explorer.common.AsyncObject;
-import com.siziksu.explorer.common.functions.Action;
 import com.siziksu.explorer.common.functions.Done;
 import com.siziksu.explorer.common.functions.Fail;
 import com.siziksu.explorer.common.functions.Success;
@@ -34,35 +33,8 @@ public class GetFilesRequest implements IGetFilesRequest {
     public void getFiles(final Success<List<File>> success, final Fail fail, final Done done) {
         new AsyncObject<List<File>>()
                 .subscribeOnMainThread()
-                .action(new Action<List<File>>() {
-
-                    @Override
-                    public List<File> action() throws Exception {
-                        return getFilesData.getFiles(directory, showHidden, showSymLinks);
-                    }
-                })
-                .done(new Done() {
-
-                    @Override
-                    public void done() {
-                        done.done();
-                    }
-                })
-                .subscribe(
-                        new Success<List<File>>() {
-
-                            @Override
-                            public void success(List<File> response) {
-                                success.success(response);
-                            }
-                        },
-                        new Fail() {
-
-                            @Override
-                            public void fail(Throwable throwable) {
-                                fail.fail(throwable);
-                            }
-                        }
-                );
+                .action(() -> getFilesData.getFiles(directory, showHidden, showSymLinks))
+                .done(done::done)
+                .subscribe(success::success, fail::fail);
     }
 }

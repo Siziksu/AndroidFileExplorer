@@ -5,19 +5,18 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.siziksu.explorer.R;
-import com.siziksu.explorer.common.Constants;
 import com.siziksu.explorer.common.comparators.FileComparator;
-import com.siziksu.explorer.common.dialogs.AlertDialogs;
 import com.siziksu.explorer.common.files.FileUtils;
-import com.siziksu.explorer.common.functions.Done;
-import com.siziksu.explorer.common.functions.Fail;
-import com.siziksu.explorer.common.functions.Success;
 import com.siziksu.explorer.common.model.Folder;
 import com.siziksu.explorer.common.model.State;
 import com.siziksu.explorer.domain.IGetFilesRequest;
+import com.siziksu.explorer.presenter.filesListeners.HeaderClickListener;
+import com.siziksu.explorer.presenter.filesListeners.ItemClickListener;
+import com.siziksu.explorer.presenter.filesListeners.ItemLongClickListener;
 import com.siziksu.explorer.ui.adapter.FilesAdapter;
 import com.siziksu.explorer.ui.adapter.HeaderAdapter;
 import com.siziksu.explorer.ui.view.DividerDecoration;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FilesPresenter implements IFilesPresenter {
+public class FilesPresenter implements IFilesPresenter, IFilesOwner {
 
     private static final String ROOT_PATH = "/";
     private static final String EXTRAS_STATE = "state";
@@ -47,6 +46,10 @@ public class FilesPresenter implements IFilesPresenter {
     private IGetFilesRequest getFilesData;
 
     private RecyclerView headerView;
+    private ItemClickListener clickListener;
+    private ItemLongClickListener longClickListener;
+
+    private Menu menu;
 
     public FilesPresenter() {
         directory = new File(ROOT_PATH);
@@ -55,16 +58,22 @@ public class FilesPresenter implements IFilesPresenter {
         files = new ArrayList<>();
         folders = new ArrayList<>();
         folders.add(new Folder(ROOT_PATH, directory));
+        clickListener = new ItemClickListener(this);
+        longClickListener = new ItemLongClickListener(this);
     }
 
     @Override
     public void register(IFilesView view) {
         this.view = view;
+        clickListener.register(view);
+        longClickListener.register(view);
     }
 
     @Override
     public void unregister() {
         view = null;
+        clickListener.unregister();
+        longClickListener.unregister();
     }
 
     @Override
@@ -84,36 +93,23 @@ public class FilesPresenter implements IFilesPresenter {
     @Override
     public void getFiles() {
         getFilesData.init(directory, showHidden, showSymLinks)
-                    .getFiles(new Success<List<File>>() {
-
-                                  @Override
-                                  public void success(List<File> response) {
-                                      if (view != null) {
-                                          files.clear();
-                                          if (response != null) {
-                                              if (!response.isEmpty()) {
-                                                  files.addAll(response);
-                                                  Collections.sort(files, new FileComparator());
-                                                  view.folderEmpty(false);
-                                              } else {
-                                                  view.folderEmpty(true);
-                                              }
+                    .getFiles(response -> {
+                                  if (view != null) {
+                                      files.clear();
+                                      if (response != null) {
+                                          if (!response.isEmpty()) {
+                                              files.addAll(response);
+                                              Collections.sort(files, new FileComparator());
+                                              view.folderEmpty(false);
+                                          } else {
+                                              view.folderEmpty(true);
                                           }
-                                          filesAdapter.notifyDataSetChanged();
                                       }
+                                      filesAdapter.notifyDataSetChanged();
                                   }
                               },
-                              new Fail() {
-                                  @Override
-                                  public void fail(Throwable throwable) {
-
-                                  }
-                              }, new Done() {
-                                @Override
-                                public void done() {
-
-                                }
-                            }
+                              throwable -> {},
+                              () -> {}
                     );
     }
 
@@ -144,7 +140,7 @@ public class FilesPresenter implements IFilesPresenter {
     public void setHeaderView(Activity activity, int id) {
         headerView = (RecyclerView) activity.findViewById(id);
         headerView.setLayoutManager(new SmoothLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
-        headerAdapter = new HeaderAdapter(activity, folders, new HeaderAdapterListener());
+        headerAdapter = new HeaderAdapter(activity, folders, new HeaderClickListener(this));
         headerView.setAdapter(headerAdapter);
     }
 
@@ -152,7 +148,7 @@ public class FilesPresenter implements IFilesPresenter {
     public void setFilesView(Activity activity, int id) {
         RecyclerView filesView = (RecyclerView) activity.findViewById(id);
         filesView.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        filesAdapter = new FilesAdapter(activity, files, new FileAdapterListener());
+        filesAdapter = new FilesAdapter(activity, files, clickListener, longClickListener);
         filesView.setAdapter(filesAdapter);
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerDecoration(ContextCompat.getDrawable(activity, R.drawable.recycler_divider));
         filesView.addItemDecoration(dividerItemDecoration);
@@ -166,15 +162,82 @@ public class FilesPresenter implements IFilesPresenter {
             if (directory.getParentFile() != null) {
                 directory = directory.getParentFile();
                 getFiles();
-                folders.remove(folders.size() - 1);
-                headerAdapter.notifyDataSetChanged();
+                int position = folders.size() - 1;
+                folders.remove(position);
+                headerAdapter.notifyItemRemoved(position);
                 scrollHeaderToEnd();
             }
             return false;
         }
     }
 
-    private void scrollHeaderToEnd() {
+    @Override
+    public void menuReady(Menu menu) {
+        this.menu = menu;
+        if (longClickListener != null) {
+            longClickListener.checkActions();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_paste:
+                longClickListener.pasteAction();
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void findFiles() {
+        getFiles();
+    }
+
+    @Override
+    public List<File> getFileList() {
+        return files;
+    }
+
+    @Override
+    public List<Folder> getFolderList() {
+        return folders;
+    }
+
+    @Override
+    public File getDirectory() {
+        return directory;
+    }
+
+    @Override
+    public void setDirectory(File file) {
+        directory = file;
+    }
+
+    @Override
+    public HeaderAdapter getHeaderAdapter() {
+        return headerAdapter;
+    }
+
+    @Override
+    public FilesAdapter getFilesAdapter() {
+        return filesAdapter;
+    }
+
+    @Override
+    public void enablePaste() {
+        MenuItem paste = menu.findItem(R.id.action_paste);
+        paste.setVisible(true);
+    }
+
+    @Override
+    public void disablePaste() {
+        MenuItem paste = menu.findItem(R.id.action_paste);
+        paste.setVisible(false);
+    }
+
+    @Override
+    public void scrollHeaderToEnd() {
         headerView.smoothScrollToPosition(folders.size() - 1);
     }
 
@@ -183,56 +246,5 @@ public class FilesPresenter implements IFilesPresenter {
             return savedInstanceState.getParcelable(EXTRAS_STATE);
         }
         return null;
-    }
-
-    private void openFile(File file) {
-        if (FileUtils.tryOpenWithDefaultMimeType(view.getActivity(), file)) {
-            return;
-        }
-        if (FileUtils.tryOpenAsPlainText(view.getActivity(), file)) {
-            return;
-        }
-        Log.e(Constants.TAG, "No Activity found to handle the Intent");
-    }
-
-    private class FileAdapterListener implements FilesAdapter.OnAdapterListener {
-
-        @Override
-        public void onItemClick(int position) {
-            File file = files.get(position);
-            if (file != null) {
-                if (file.canRead()) {
-                    if (file.isDirectory()) {
-                        directory = file;
-                        getFiles();
-                        folders.add(new Folder(directory.getName(), directory));
-                        headerAdapter.notifyDataSetChanged();
-                        scrollHeaderToEnd();
-                    } else {
-                        openFile(file);
-                    }
-                } else {
-                    if (view != null && !view.getActivity().isFinishing()) {
-                        AlertDialogs.get(view.getActivity())
-                                    .message(view.getActivity().getString(R.string.no_read_permission_message))
-                                    .positiveButtonText(view.getActivity().getString(android.R.string.ok))
-                                    .show();
-                    }
-                }
-            }
-        }
-    }
-
-    private class HeaderAdapterListener implements HeaderAdapter.OnAdapterListener {
-
-        @Override
-        public void onItemClick(int position) {
-            directory = folders.get(position).getFolder();
-            for (int i = folders.size() - 1; i > position; i--) {
-                folders.remove(i);
-            }
-            headerAdapter.notifyDataSetChanged();
-            getFiles();
-        }
     }
 }

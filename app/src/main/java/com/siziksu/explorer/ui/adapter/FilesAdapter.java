@@ -19,15 +19,17 @@ import java.util.List;
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHolder> {
 
     private final Context context;
-    private final OnAdapterListener listener;
+    private final OnItemClickListener listener;
+    private final OnItemLongClickListener longListener;
     private final LayoutInflater inflater;
     private List<File> files;
 
-    public FilesAdapter(Context context, List<File> files, OnAdapterListener listener) {
+    public FilesAdapter(Context context, List<File> files, OnItemClickListener listener, OnItemLongClickListener longListener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.files = files;
         this.listener = listener;
+        this.longListener = longListener;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
         }
     }
 
-    class MainViewHolder extends BaseViewHolder implements View.OnClickListener {
+    class MainViewHolder extends BaseViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private final View fileRow;
         private final ImageView fileImage;
@@ -98,16 +100,28 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.BaseViewHold
             filePermissions = (TextView) itemView.findViewById(R.id.filePermissions);
             fileDate = (TextView) itemView.findViewById(R.id.fileDate);
             fileRow.setOnClickListener(this);
+            fileRow.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            listener.onItemClick(getAdapterPosition());
+            listener.onItemClick(v, getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            longListener.onItemLongClick(v, getAdapterPosition());
+            return true;
         }
     }
 
-    public interface OnAdapterListener {
+    public interface OnItemClickListener {
 
-        void onItemClick(int position);
+        void onItemClick(View v, int position);
+    }
+
+    public interface OnItemLongClickListener {
+
+        void onItemLongClick(View v, int position);
     }
 }

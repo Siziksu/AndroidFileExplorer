@@ -15,11 +15,11 @@ import java.util.List;
 
 public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.BaseViewHolder> {
 
-    private final OnAdapterListener listener;
+    private final OnItemClickListener listener;
     private final LayoutInflater inflater;
     private List<Folder> folders;
 
-    public HeaderAdapter(Context context, List<Folder> folders, OnAdapterListener listener) {
+    public HeaderAdapter(Context context, List<Folder> folders, OnItemClickListener listener) {
         this.inflater = LayoutInflater.from(context);
         this.folders = folders;
         this.listener = listener;
@@ -73,7 +73,7 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.BaseViewHo
         }
     }
 
-    public interface OnAdapterListener {
+    public interface OnItemClickListener {
 
         void onItemClick(int position);
     }

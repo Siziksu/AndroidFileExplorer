@@ -16,7 +16,8 @@
     </style>
 
     <style name="CustomToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
-
     </style>
 
+    <style name="CustomToolbarThemeOverlay" parent="ThemeOverlay.AppCompat.Light">
+    </style>
 </resources>

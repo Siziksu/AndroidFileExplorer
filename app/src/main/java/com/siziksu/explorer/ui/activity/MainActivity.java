@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -81,5 +83,20 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
     @Override
     public void folderEmpty(boolean value) {
         emptyFolder.setVisibility(value ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem action_paste = menu.add(Menu.NONE, R.id.action_paste, Menu.NONE, getString(R.string.action_paste));
+        action_paste.setIcon(R.drawable.ic_menu_paste);
+        action_paste.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        action_paste.setVisible(false);
+        presenter.menuReady(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return presenter.onOptionsItemSelected(item);
     }
 }

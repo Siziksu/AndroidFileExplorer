@@ -2,6 +2,8 @@ package com.siziksu.explorer.presenter;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.siziksu.explorer.domain.IGetFilesRequest;
 
@@ -24,4 +26,8 @@ public interface IFilesPresenter {
     void setFilesView(Activity activity, int id);
 
     boolean onBackPressed();
+
+    void menuReady(Menu menu);
+
+    boolean onOptionsItemSelected(MenuItem item);
 }
