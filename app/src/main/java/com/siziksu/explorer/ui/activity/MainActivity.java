@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
     }
 
     @Override
-    public void folderEmpty(boolean value) {
+    public void showFolderIsEmpty(boolean value) {
         emptyFolder.setVisibility(value ? View.VISIBLE : View.INVISIBLE);
     }
 
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements IFilesView {
         action_paste.setIcon(R.drawable.ic_menu_paste);
         action_paste.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         action_paste.setVisible(false);
-        presenter.menuReady(menu);
+        presenter.onCreateOptionsMenu(menu);
         return true;
     }
 

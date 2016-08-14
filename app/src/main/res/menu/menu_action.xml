@@ -8,7 +8,6 @@
         android:id="@+id/delete"
         android:title="@string/action_delete" />
     <item
-        android:visible="false"
         android:id="@+id/copy"
         android:title="@string/action_copy" />
     <item

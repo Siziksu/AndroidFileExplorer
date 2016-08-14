@@ -9,12 +9,10 @@ public class FileAction {
 
     private final int type;
     private final File file;
-    private final File folder;
 
-    public FileAction(int type, File file, File folder) {
+    public FileAction(int type, File file) {
         this.type = type;
         this.file = file;
-        this.folder = folder;
     }
 
     public int getAction() {
@@ -23,9 +21,5 @@ public class FileAction {
 
     public File getFile() {
         return file;
-    }
-
-    public File getFolder() {
-        return folder;
     }
 }

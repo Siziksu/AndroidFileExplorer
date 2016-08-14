@@ -27,7 +27,7 @@ public interface IFilesPresenter {
 
     boolean onBackPressed();
 
-    void menuReady(Menu menu);
+    void onCreateOptionsMenu(Menu menu);
 
     boolean onOptionsItemSelected(MenuItem item);
 }

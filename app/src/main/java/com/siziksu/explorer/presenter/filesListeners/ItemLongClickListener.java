@@ -51,9 +51,11 @@ public class ItemLongClickListener implements FilesAdapter.OnItemLongClickListen
                           deleteAction(position);
                           break;
                       case R.id.copy:
+                          action = new FileAction(FileAction.COPY, presenter.getFileList().get(position));
+                          presenter.enablePaste();
                           break;
                       case R.id.move:
-                          action = new FileAction(FileAction.MOVE, presenter.getFileList().get(position), presenter.getDirectory());
+                          action = new FileAction(FileAction.MOVE, presenter.getFileList().get(position));
                           presenter.enablePaste();
                           break;
                       default:
@@ -101,12 +103,29 @@ public class ItemLongClickListener implements FilesAdapter.OnItemLongClickListen
                 () -> {
                     switch (action.getAction()) {
                         case FileAction.COPY:
+                            copyFile();
                             break;
                         case FileAction.MOVE:
                             pasteFile();
                             break;
                         default:
                             break;
+                    }
+                }
+        );
+    }
+
+    private void copyFile() {
+        FileActions.copy(
+                action.getFile(),
+                presenter.getDirectory(),
+                (value, message) -> {
+                    if (!value) {
+                        new AlertDialogs((AppCompatActivity) view.getActivity()).info(message);
+                    } else {
+                        action = null;
+                        presenter.disablePaste();
+                        presenter.findFiles();
                     }
                 }
         );

@@ -6,5 +6,5 @@ public interface IFilesView {
 
     Activity getActivity();
 
-    void folderEmpty(boolean value);
+    void showFolderIsEmpty(boolean value);
 }

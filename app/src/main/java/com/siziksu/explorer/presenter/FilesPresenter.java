@@ -49,7 +49,7 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
     private ItemClickListener clickListener;
     private ItemLongClickListener longClickListener;
 
-    private Menu menu;
+    private MenuItem action_paste;
 
     public FilesPresenter() {
         directory = new File(ROOT_PATH);
@@ -100,9 +100,9 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
                                           if (!response.isEmpty()) {
                                               files.addAll(response);
                                               Collections.sort(files, new FileComparator());
-                                              view.folderEmpty(false);
+                                              view.showFolderIsEmpty(false);
                                           } else {
-                                              view.folderEmpty(true);
+                                              view.showFolderIsEmpty(true);
                                           }
                                       }
                                       filesAdapter.notifyDataSetChanged();
@@ -123,14 +123,14 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
                     if (!state.getFiles().isEmpty()) {
                         files.addAll(state.getFiles());
                         filesAdapter.notifyDataSetChanged();
-                        view.folderEmpty(false);
+                        view.showFolderIsEmpty(false);
                     } else {
-                        view.folderEmpty(true);
+                        view.showFolderIsEmpty(true);
                     }
                     scrollHeaderToEnd();
                 }
             } else {
-                view.folderEmpty(false);
+                view.showFolderIsEmpty(false);
                 scrollHeaderToEnd();
             }
         }
@@ -172,8 +172,8 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
     }
 
     @Override
-    public void menuReady(Menu menu) {
-        this.menu = menu;
+    public void onCreateOptionsMenu(Menu menu) {
+        action_paste = menu.findItem(R.id.action_paste);
         if (longClickListener != null) {
             longClickListener.checkActions();
         }
@@ -226,14 +226,12 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
 
     @Override
     public void enablePaste() {
-        MenuItem paste = menu.findItem(R.id.action_paste);
-        paste.setVisible(true);
+        action_paste.setVisible(true);
     }
 
     @Override
     public void disablePaste() {
-        MenuItem paste = menu.findItem(R.id.action_paste);
-        paste.setVisible(false);
+        action_paste.setVisible(false);
     }
 
     @Override
