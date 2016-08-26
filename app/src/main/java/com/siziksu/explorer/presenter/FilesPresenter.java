@@ -43,7 +43,7 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
 
     private boolean showHidden;
     private boolean showSymLinks;
-    private IGetFilesRequest getFilesData;
+    private IGetFilesRequest getFilesRequest;
 
     private RecyclerView headerView;
     private ItemClickListener clickListener;
@@ -51,7 +51,8 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
 
     private MenuItem action_paste;
 
-    public FilesPresenter() {
+    public FilesPresenter(IGetFilesRequest getFilesRequest) {
+        this.getFilesRequest = getFilesRequest;
         directory = new File(ROOT_PATH);
         showHidden = true;
         showSymLinks = true;
@@ -77,12 +78,6 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
     }
 
     @Override
-    public FilesPresenter setGetFilesRequest(IGetFilesRequest getFilesData) {
-        this.getFilesData = getFilesData;
-        return this;
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         State state = new State();
         state.setDirectory(directory);
@@ -92,25 +87,25 @@ public class FilesPresenter implements IFilesPresenter, IFilesOwner {
 
     @Override
     public void getFiles() {
-        getFilesData.init(directory, showHidden, showSymLinks)
-                    .getFiles(response -> {
-                                  if (view != null) {
-                                      files.clear();
-                                      if (response != null) {
-                                          if (!response.isEmpty()) {
-                                              files.addAll(response);
-                                              Collections.sort(files, new FileComparator());
-                                              view.showFolderIsEmpty(false);
-                                          } else {
-                                              view.showFolderIsEmpty(true);
-                                          }
-                                      }
-                                      filesAdapter.notifyDataSetChanged();
-                                  }
-                              },
-                              throwable -> {},
-                              () -> {}
-                    );
+        getFilesRequest.init(directory, showHidden, showSymLinks)
+                       .getFiles(response -> {
+                                     if (view != null) {
+                                         files.clear();
+                                         if (response != null) {
+                                             if (!response.isEmpty()) {
+                                                 files.addAll(response);
+                                                 Collections.sort(files, new FileComparator());
+                                                 view.showFolderIsEmpty(false);
+                                             } else {
+                                                 view.showFolderIsEmpty(true);
+                                             }
+                                         }
+                                         filesAdapter.notifyDataSetChanged();
+                                     }
+                                 },
+                                 throwable -> {},
+                                 () -> {}
+                       );
     }
 
     @Override
